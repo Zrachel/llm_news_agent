@@ -1,0 +1,108 @@
+# LLM News Agent Configuration
+
+# Monitoring intervals (seconds)
+intervals:
+  arxiv: 3600        # 1 hour
+  x_nitter: 600      # 10 minutes
+  xiaohongshu: 1800  # 30 minutes
+
+# arXiv settings
+arxiv:
+  max_results: 50
+  categories:
+    - cs.CL
+    - cs.LG
+  keywords:
+    - LLM
+    - language model
+    - transformer
+    - GPT
+    - reasoning
+    - RLHF
+    - RLVR
+    - Reasoning
+
+# X.com (Nitter) settings
+x_nitter:
+  # Nitter instances (fallback order)
+  instances:
+    - nitter.privacydev.net
+    - nitter.poast.org
+    - nitter.woodland.cafe
+    - nitter.1d4.us
+    - nitter.net
+
+  # Accounts to monitor
+  accounts:
+    # Official AI labs
+    - OpenAI
+    - AnthropicAI
+    - GoogleDeepMind
+    - MetaAI
+    - GeminiApp
+
+    # Paper aggregators
+    - _akhaliq
+    - cwolferesearch
+    - jiqizhixin
+    - papers_daily
+    - rohanpaul_ai
+
+    # Researchers
+    - ylecun
+    - kaborni
+    - rryssf_
+
+# Xiaohongshu settings
+xiaohongshu:
+  enabled: false  # Set to true and provide cookie
+  keywords:
+    - LLM
+    - 大模型
+    - GPT
+    - Claude
+    - ChatGPT
+    - AI模型
+    - 语言模型
+
+# LLM filter settings
+llm_filter:
+  model: gpt-4o-mini  # or glm-4-flash
+  temperature: 0.2
+  max_tokens: 2000
+
+  # Topics to include (pure text LLM)
+  include_topics:
+    - 新模型发布
+    - 预训练/后训练
+    - RLHF/对齐
+    - 推理能力
+    - 架构创新
+    - Agent/Tool Use/Deesearch/Deep Search
+    - 代码生成/数学
+    - Scaling Law
+    - Deepseek/GLM/Kimi/Minimax/Qwen
+
+  # Topics to exclude
+  exclude_topics:
+    - 多模态
+    - 视觉/图像
+    - 语音/音频
+    - 视频生成
+    - 具身智能
+    - 机器人
+    - 生物
+
+
+# Telegram settings
+telegram:
+  # Set via environment variables:
+  # TELEGRAM_BOT_TOKEN
+  # TELEGRAM_CHAT_ID
+  parse_mode: Markdown
+  disable_preview: false
+
+# Logging
+logging:
+  level: INFO
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
