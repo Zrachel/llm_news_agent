@@ -1,17 +1,17 @@
 # LLM News Agent
 
-实时监控 LLM（大语言模型）研究进展的 Agent，自动推送相关论文和新闻到 Telegram。
+实时监控 LLM（大语言模型）研究进展的 Agent。
 
 ## 功能特性
 
 - **多源监控**
   - 📚 arXiv: 监控 cs.CL、cs.LG 分类的最新论文
   - 🐦 X.com: 通过 Nitter RSS 监控 AI 领域关键账号
-  - 📕 小红书: 可选，监控 AI/LLM 相关内容
+  - 📕 小红书: 可选，监控 AI/LLM 相关内容 #这个目前还不能实现
 
 - **智能过滤**: 使用 LLM (GPT-4o-mini/GLM-4) 自动识别与「纯文本 LLM」相关的内容
 - **实时推送**: 通过 Telegram Bot 即时推送相关更新
-- **重要性评级**: 自动评估内容重要程度（🔥🔥🔥 / 🔥🔥 / 🔥）
+- **重要性评级**: 自动评估内容重要程度（🔥🔥🔥 / 🔥🔥 / 🔥） 
 
 ## 快速开始
 
@@ -44,12 +44,6 @@ TELEGRAM_CHAT_ID=your-chat-id
 # XIAOHONGSHU_COOKIE=your-cookie
 ```
 
-### 3. 获取 Telegram 配置
-
-1. 在 Telegram 搜索 `@BotFather`
-2. 发送 `/newbot`，按提示创建 Bot
-3. 记录返回的 Token
-4. 搜索 `@userinfobot`，发送任意消息获取你的 Chat ID
 
 ### 4. 运行
 
