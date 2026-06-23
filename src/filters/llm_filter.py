@@ -169,7 +169,6 @@ class LLMFilter:
                 raise ValueError("openai_api_key is required for OpenAI provider")
 
             model = config.get("model") or config.get("openai_model", "gpt-4o-mini")
-            #model = config.get("openai_model", "gpt-4o-mini")
 
             self.client = OpenAIClient(
                 api_key=openai_api_key,
@@ -252,11 +251,12 @@ class LLMFilter:
             # Debug: log raw response
             logger.debug(f"LLM raw response length: {len(result_text)} chars")
 
-            # Remove markdown code block if present
+            # Remove markdown code block wrappers if present
             result_text = result_text.strip()
             if "```" in result_text:
-                # Remove ```json or ``` markers
-                result_text = re.sub(r"```(?:json)?", "", result_text).strip()
+                # Remove ```json ... ``` or ``` ... ``` blocks
+                result_text = re.sub(r"^```(?:json)?\s*", "", result_text).strip()
+                result_text = re.sub(r"\s*```$", "", result_text).strip()
 
             # Try to parse the JSON directly first
             try:

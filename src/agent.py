@@ -4,7 +4,13 @@ import asyncio
 from typing import Any
 
 from src.filters import LLMFilter
-from src.monitors import ArxivMonitor, HuggingFaceMonitor, NewsItem, XNitterMonitor, XiaohongshuMonitor
+from src.monitors import (
+    ArxivMonitor,
+    HuggingFaceMonitor,
+    NewsItem,
+    XiaohongshuMonitor,
+    XNitterMonitor,
+)
 from src.notifiers import ConsoleNotifier
 from src.utils import ItemCache, LLMProvider, Settings, get_logger
 
@@ -148,7 +154,7 @@ class LLMNewsAgent:
         provider_name = self.settings.llm_provider.value.upper()
         logger.info("🚀 LLM News Agent starting...")
         logger.info(f"🤖 LLM Provider: {provider_name}")
-        logger.info(f"📊 Monitors: arXiv, X.com (Nitter), HuggingFace, 小红书")
+        logger.info("📊 Monitors: arXiv, X.com (Nitter), HuggingFace, 小红书")
         logger.info(f"⏱️  Intervals: arXiv={self.settings.get_interval('arxiv')}s, "
                    f"X={self.settings.get_interval('x_nitter')}s, "
                    f"HF={self.settings.get_interval('huggingface')}s, "

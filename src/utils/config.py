@@ -40,15 +40,16 @@ class Settings(BaseSettings):
     def resolved_anthropic_model(self) -> str:
         """Resolve 'auto' to an actual model name."""
         model = self.anthropic_model
-        # If auto, try specific model settings, otherwise use default
         if model == "auto":
             opus = self.anthropic_default_opus_model
-            sonnet = self.anthropic_default_sonnet_model
-            # If still auto, use a concrete default model
-            if opus == "auto" or not opus:
-                model = "auto"
-            else:
+            # If opus is set and not "auto", use it; otherwise fall back to sonnet or a default
+            if opus and opus != "auto":
                 model = opus
+            elif self.anthropic_default_sonnet_model and self.anthropic_default_sonnet_model != "auto":
+                model = self.anthropic_default_sonnet_model
+            else:
+                # Last resort: use a concrete default that the API accepts
+                model = "claude-sonnet-4-5"
         return model
 
     anthropic_default_opus_model: str | None = Field(None, description="Default Opus model")

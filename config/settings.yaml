@@ -5,6 +5,7 @@ intervals:
   arxiv: 3600        # 1 hour
   x_nitter: 600      # 10 minutes
   xiaohongshu: 1800  # 30 minutes
+  huggingface: 3600  # 1 hour
 
 # arXiv settings
 arxiv:
@@ -57,6 +58,7 @@ x_nitter:
 # Xiaohongshu settings
 xiaohongshu:
   enabled: true # Set to true and provide cookie
+  limit_per_keyword: 5 # Max notes per keyword per fetch
   keywords:
     - LLM
     - 大模型
@@ -65,6 +67,35 @@ xiaohongshu:
     - ChatGPT
     - AI模型
     - 语言模型
+
+# HuggingFace settings
+huggingface:
+  max_results: 50
+  keywords:
+    - llm
+    - language model
+    - instruction
+    - chat
+    - sft
+    - rlhf
+    - dpo
+    - preference
+    - reasoning
+    - cot
+    - code
+    - math
+    - benchmark
+    - evaluation
+    - finetune
+    - pretrain
+    - alignment
+    - gpt
+    - llama
+    - qwen
+    - mistral
+    - gemma
+    - phi
+    - deepseek
 
 # LLM filter settings
 llm_filter:

@@ -83,7 +83,10 @@ class XNitterMonitor(BaseMonitor):
             return []
 
         new_items: list[NewsItem] = []
-        loop = asyncio.get_event_loop()
+        try:
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            loop = asyncio.get_event_loop()
 
         for account in self.accounts:
             try:
@@ -95,7 +98,7 @@ class XNitterMonitor(BaseMonitor):
                         loop.run_in_executor(None, feedparser.parse, rss_url),
                         timeout=30  # 30 second timeout per account
                     )
-                except asyncio.TimeoutError:
+                except TimeoutError:
                     logger.warning(f"Timeout fetching @{account}")
                     continue
 
