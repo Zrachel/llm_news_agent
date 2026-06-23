@@ -40,3 +40,6 @@ htmlcov/
 
 # macOS
 .DS_Store
+nohup.out
+motivation_figure.*
+draw_motivation.py

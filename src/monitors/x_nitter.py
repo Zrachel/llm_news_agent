@@ -89,10 +89,15 @@ class XNitterMonitor(BaseMonitor):
             try:
                 rss_url = f"https://{instance}/{account}/rss"
 
-                # Run feedparser in thread pool (blocking I/O)
-                feed = await loop.run_in_executor(
-                    None, feedparser.parse, rss_url
-                )
+                # Run feedparser in thread pool with timeout
+                try:
+                    feed = await asyncio.wait_for(
+                        loop.run_in_executor(None, feedparser.parse, rss_url),
+                        timeout=30  # 30 second timeout per account
+                    )
+                except asyncio.TimeoutError:
+                    logger.warning(f"Timeout fetching @{account}")
+                    continue
 
                 for entry in feed.entries[:10]:
                     # Generate unique ID from link

@@ -77,7 +77,7 @@ class AnthropicClient(BaseLLMClient):
         self,
         api_key: str,
         base_url: str | None = None,
-        model: str = "claude-opus-4-6",
+        model: str = "auto",
         max_tokens: int = 2000,
         temperature: float = 0.2,
     ):
@@ -152,8 +152,8 @@ class LLMFilter:
             if not anthropic_api_key:
                 raise ValueError("anthropic_api_key is required for Anthropic provider")
 
-            # Default to claude-opus-4-6, can be overridden in config
-            model = config.get("anthropic_model", "claude-opus-4-6")
+            # Default to auto, can be overridden in config
+            model = config.get("anthropic_model", "auto")
 
             self.client: BaseLLMClient = AnthropicClient(
                 api_key=anthropic_api_key,
@@ -168,7 +168,8 @@ class LLMFilter:
             if not openai_api_key:
                 raise ValueError("openai_api_key is required for OpenAI provider")
 
-            model = config.get("openai_model", "gpt-4o-mini")
+            model = config.get("model") or config.get("openai_model", "gpt-4o-mini")
+            #model = config.get("openai_model", "gpt-4o-mini")
 
             self.client = OpenAIClient(
                 api_key=openai_api_key,

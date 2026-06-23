@@ -1,9 +1,34 @@
 """LLM News Agent - Entry point."""
 
+import json
+import os
 import asyncio
 import signal
 import sys
+from pathlib import Path
 
+# Load environment variables from ~/.baidu-cc/user.json BEFORE importing anything
+def load_baidu_cc_env() -> None:
+    """Load environment variables from ~/.baidu-cc/user.json."""
+    user_json_path = Path.home() / ".baidu-cc" / "user.json"
+    if not user_json_path.exists():
+        return
+
+    try:
+        with open(user_json_path) as f:
+            data = json.load(f)
+            env_vars = data.get("env", {})
+            for key, value in env_vars.items():
+                os.environ[key] = value
+                print(f"{key}:{value}")
+    except (json.JSONDecodeError, IOError) as e:
+        print(f"Warning: Failed to load ~/.baidu-cc/user.json: {e}", file=sys.stderr)
+
+
+# Load env vars BEFORE any imports that use them
+load_baidu_cc_env()
+
+# Now import modules that depend on environment variables
 from src.agent import LLMNewsAgent
 from src.utils import get_settings, setup_logging
 

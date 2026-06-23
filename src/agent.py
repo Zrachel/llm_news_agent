@@ -4,7 +4,7 @@ import asyncio
 from typing import Any
 
 from src.filters import LLMFilter
-from src.monitors import ArxivMonitor, NewsItem, XNitterMonitor, XiaohongshuMonitor
+from src.monitors import ArxivMonitor, HuggingFaceMonitor, NewsItem, XNitterMonitor, XiaohongshuMonitor
 from src.notifiers import ConsoleNotifier
 from src.utils import ItemCache, LLMProvider, Settings, get_logger
 
@@ -27,15 +27,21 @@ class LLMNewsAgent:
             cookie=settings.xiaohongshu_cookie,
             config=settings.get_xiaohongshu_config(),
         )
+        self.hf_monitor = HuggingFaceMonitor(settings.get_huggingface_config())
 
         # Initialize filter with appropriate provider
+        llm_config = settings.get_llm_filter_config()
+        # Use resolved model name (handles 'auto' -> actual model)
+        if settings.llm_provider == LLMProvider.ANTHROPIC:
+            llm_config["anthropic_model"] = settings.resolved_anthropic_model
+
         self.llm_filter = LLMFilter(
             provider=settings.llm_provider.value,
-            anthropic_api_key=settings.anthropic_api_key,
+            anthropic_api_key=settings.anthropic_auth_token,
             anthropic_base_url=settings.anthropic_base_url,
             openai_api_key=settings.openai_api_key,
             openai_base_url=settings.openai_base_url,
-            config=settings.get_llm_filter_config(),
+            config=llm_config,
         )
 
         # Initialize notifier (console output)
@@ -127,6 +133,14 @@ class LLMNewsAgent:
             self.settings.get_interval("xiaohongshu"),
         )
 
+    async def monitor_huggingface(self) -> None:
+        """HuggingFace datasets monitoring loop."""
+        await self._monitor_loop(
+            "HuggingFace",
+            self.hf_monitor.fetch_new_items,
+            self.settings.get_interval("huggingface"),
+        )
+
     async def start(self) -> None:
         """Start the agent."""
         self._running = True
@@ -134,9 +148,10 @@ class LLMNewsAgent:
         provider_name = self.settings.llm_provider.value.upper()
         logger.info("🚀 LLM News Agent starting...")
         logger.info(f"🤖 LLM Provider: {provider_name}")
-        logger.info(f"📊 Monitors: arXiv, X.com (Nitter), 小红书")
+        logger.info(f"📊 Monitors: arXiv, X.com (Nitter), HuggingFace, 小红书")
         logger.info(f"⏱️  Intervals: arXiv={self.settings.get_interval('arxiv')}s, "
                    f"X={self.settings.get_interval('x_nitter')}s, "
+                   f"HF={self.settings.get_interval('huggingface')}s, "
                    f"小红书={self.settings.get_interval('xiaohongshu')}s")
 
         # Send startup notification
@@ -153,6 +168,7 @@ class LLMNewsAgent:
         await asyncio.gather(
             self.monitor_arxiv(),
             self.monitor_x(),
+            self.monitor_huggingface(),
             self.monitor_xiaohongshu(),
             return_exceptions=True,
         )

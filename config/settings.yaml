@@ -47,6 +47,7 @@ x_nitter:
     - jiqizhixin
     - papers_daily
     - rohanpaul_ai
+    - askalphaxiv
 
     # Researchers
     - ylecun
@@ -55,7 +56,7 @@ x_nitter:
 
 # Xiaohongshu settings
 xiaohongshu:
-  enabled: false  # Set to true and provide cookie
+  enabled: true # Set to true and provide cookie
   keywords:
     - LLM
     - 大模型
@@ -67,7 +68,8 @@ xiaohongshu:
 
 # LLM filter settings
 llm_filter:
-  model: gpt-4o-mini  # or glm-4-flash
+  #model: gpt-4o-mini  # or glm-4-flash
+  model: glm-4.7
   temperature: 0.2
   max_tokens: 2000
 

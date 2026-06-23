@@ -31,8 +31,28 @@ class Settings(BaseSettings):
     )
 
     # Anthropic API (recommended)
-    anthropic_api_key: str | None = Field(None, description="Anthropic API key")
+    anthropic_auth_token: str | None = Field(None, alias="anthropic_api_key", description="Anthropic API key")
     anthropic_base_url: str | None = Field(None, description="Custom Anthropic API base URL")
+    anthropic_model: str = Field(default="auto", description="Anthropic model name")
+
+    # Map 'auto' to actual model names
+    @property
+    def resolved_anthropic_model(self) -> str:
+        """Resolve 'auto' to an actual model name."""
+        model = self.anthropic_model
+        # If auto, try specific model settings, otherwise use default
+        if model == "auto":
+            opus = self.anthropic_default_opus_model
+            sonnet = self.anthropic_default_sonnet_model
+            # If still auto, use a concrete default model
+            if opus == "auto" or not opus:
+                model = "auto"
+            else:
+                model = opus
+        return model
+
+    anthropic_default_opus_model: str | None = Field(None, description="Default Opus model")
+    anthropic_default_sonnet_model: str | None = Field(None, description="Default Sonnet model")
 
     # OpenAI API (alternative)
     openai_api_key: str | None = Field(None, description="OpenAI API key")
@@ -55,8 +75,8 @@ class Settings(BaseSettings):
 
     def model_post_init(self, __context: Any) -> None:
         """Validate that at least one LLM API key is provided."""
-        if self.llm_provider == LLMProvider.ANTHROPIC and not self.anthropic_api_key:
-            raise ValueError("ANTHROPIC_API_KEY is required when using Anthropic provider")
+        if self.llm_provider == LLMProvider.ANTHROPIC and not self.anthropic_auth_token:
+            raise ValueError("ANTHROPIC_AUTH_TOKEN is required when using Anthropic provider")
         if self.llm_provider == LLMProvider.OPENAI and not self.openai_api_key:
             raise ValueError("OPENAI_API_KEY is required when using OpenAI provider")
 
@@ -73,7 +93,7 @@ class Settings(BaseSettings):
 
     def get_interval(self, source: str) -> int:
         """Get monitoring interval for a source."""
-        defaults = {"arxiv": 3600, "x_nitter": 600, "xiaohongshu": 1800}
+        defaults = {"arxiv": 3600, "x_nitter": 600, "xiaohongshu": 1800, "huggingface": 3600}
         intervals = self.yaml_config.get("intervals", {})
         return intervals.get(source, defaults.get(source, 3600))
 
@@ -88,6 +108,10 @@ class Settings(BaseSettings):
     def get_xiaohongshu_config(self) -> dict[str, Any]:
         """Get Xiaohongshu configuration."""
         return self.yaml_config.get("xiaohongshu", {})
+
+    def get_huggingface_config(self) -> dict[str, Any]:
+        """Get HuggingFace configuration."""
+        return self.yaml_config.get("huggingface", {})
 
     def get_llm_filter_config(self) -> dict[str, Any]:
         """Get LLM filter configuration."""
